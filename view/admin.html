@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理員界面</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: helvetica;
+            font-weight: 100;
+            font-size: 14px;
+            margin: 0 auto;
+            background: #FFFFBB;
+            height: 100vh;
+            background-image: url("https://bing.biturl.top/?resolution=1920&format=image&index=0&mkt=zh-CN");
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .right {
+            float: right;
+            position: relative;
+            top: 6px;
+        }
+
+        .top {
+            margin-top: -30px;
+        }
+
+        .content {
+            position: absolute;
+            left: 50%;
+            top: 35px;
+            transform: translateX(-50%);
+            max-width: 400px;
+            width: calc(100% - 20px);
+            ;
+        }
+
+        #notebooks {
+            background: whitesmoke;
+            padding: 15px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            box-shadow: inset 1px 1px 0 white;
+            /* max-height: 450px; */
+        }
+
+        .selectbox+.warning,
+        .selectbox+.error {
+            text-align: center;
+        }
+
+        ul {
+            margin: 0 auto;
+            padding: 0;
+            max-height: 390px;
+            overflow-y: auto;
+
+            padding: 5px 5px 0 5px;
+            border-left: none;
+            border-right: none;
+        }
+
+        li {
+            list-style: none;
+            background-color: rgba(0, 0, 0, 0.05);
+            background-image:
+                linear-gradient(90deg,
+                    #FFD32E 10px,
+                    #EEE 10px,
+                    #EEE 11px,
+                    transparent 11px);
+            padding: 10px 15px 10px 25px;
+            border: 1px solid #CCC;
+            box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.5);
+            margin-bottom: 5px;
+            width: 100%;
+            box-sizing: border-box;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .selectbox {
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            /* width: 100%; */
+            display: flex;
+            justify-content: space-between;
+            /* text-align: right; */
+            padding: 5px 5px 0 5px;
+        }
+
+        .total {
+            font-size: 12px;
+        }
+
+        #query {
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 19px;
+            padding: 5px;
+            font-family: calibri light;
+            margin-bottom: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+            box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .genbox {
+            display: block;
+            background: #FFD32E;
+            margin-top: -5px;
+            border-radius: 0 0 5px 5px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: inset 1px 1px rgba(255, 255, 255, 0.5);
+        }
+
+        .genbox label {
+            font-size: 14px;
+            color: white;
+        }
+
+        .genbox input {
+            /* width: 100%; */
+            box-sizing: border-box;
+            font-size: 14px;
+            background-color: #fffff4;
+            /* padding: 5px; */
+            font-family: calibri light;
+            /* margin-bottom: 10px; */
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+            box-shadow: inset 1px 1px 0 rgb(0 0 0 / 10%);
+            outline: 1px white;
+        }
+
+        .genbox button {
+            margin-right: 30px;
+        }
+
+        #genmsg {
+            font-size: 12px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .success::before {
+            content: "結果: ";
+        }
+
+        .error {
+            color: red;
+        }
+
+        .error::before {
+            content: "錯誤: ";
+        }
+
+        .warning {
+            color: rgb(255, 0, 234);
+        }
+
+        .warning::before {
+            content: "提示: ";
+        }
+
+        #notebooks select {
+            width: 100px;
+            border-radius: 3px 3px 3px 3px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-left: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        #notebooks select:focus,
+        #query:focus {
+            border: 1px solid #FFD32E;
+            box-shadow: 0 0 10px rgba(255, 255, 0, 0.1);
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        function loadLocalToken() {
+            this.jwtTokenData = localStorage.getItem("luckToken");
+            if (!jwtTokenData) {
+                window.jwtToken = null;
+                return
+            }
+            try {
+                this.jwtToken = JSON.parse(jwtTokenData);
+                if (jwtToken.Token.length === 0) {
+                    window.jwtToken = null;
+                    return;
+                }
+                jwtToken.ExpiresAt = new Date(jwtToken.ExpiresAt);
+                window.jwtToken = jwtToken
+            } catch (error) {
+                window.jwtToken = null;
+            }
+        }
+        function Auth() {
+            if (!window.jwtToken) {
+                window.loginState = "未登錄";
+                return false;
+            }
+            try {
+                if (new Date() > window.jwtToken.ExpiresAt) return window.loginState = "登錄已過期,請重新登錄", false;
+                return true;
+            } catch (error) {
+                window.loginState = "未登錄";
+                return false;
+            }
+        }
+
+        (function () {
+            loadLocalToken();
+            if (!Auth()) document.querySelector("html").innerHTML = window.loginState;
+        })();
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.31/vue.global.prod.min.js"
+        integrity="sha512-aHDp6BDlnbRLDTxmY5GIqQA0RQd6dmeKIDDDiEJlRrKNQPZbo2mjsR/DGMUzupcCpE4XgPyeIPnDQdJNUmeEhw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <div class="container">
+        <div class="content">
+            <div id="notebooks" ng-app="notebooks" ng-controller="NotebookListCtrl">
+                <input type="text" id="query" ng-model="query" />
+                <div class="selectbox">
+                    <div class="total">總共<span id="total">0</span>條記錄</div>
+                    <select ng-model="orderList">
+                        <option value="name">By name</option>
+                        <option value="-age">Newest</option>
+                        <option value="age">Oldest</option>
+                    </select>
+                </div>
+                <ul id="notebook_ul">
+                    <!-- <li ng-repeat="notebook in notebooks | filter:query | orderBy: orderList">
+                        LineID: anby011<br />
+                        ShortLinK: awd2gs4f1v<br />
+                        Prize: 雪肌淨膚面膜
+                        <div class="right top">
+                            2022/03/08
+                        </div>
+                    </li> -->
+                </ul>
+            </div>
+            <div class="genbox">
+                <div class="genboxtop">
+                    <label for="lineid">lineID</label>
+                    <input id="lineid" type="text">
+                    <button id="genbtb">gen</button>
+                </div>
+                <div id="genmsg"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        "use strict";
+        function App() {
+            this.totalE = document.getElementById("total");
+            this.genbtbE = document.getElementById("genbtb");
+            this.lineidE = document.getElementById("lineid");
+            this.genmsgE = document.getElementById("genmsg");
+            this.notebook_ulE = document.getElementById("notebook_ul");
+            this.genNotebook = (info) => {
+                var htmlTmp = ` LineID: ${info.LineId}<br />
+                    ShortLink: ${info.ShortLink}<br />
+                    Prize: ${info.Prize}
+                    <div class="right top">
+                        ${info.LuckDate}
+                    </div>`;
+                var liEle = document.createElement("li");
+                liEle.innerHTML = htmlTmp;
+                if (Array.isArray(window.links.data)) {
+                    window.links.data.push(info);
+                    window.links.total++;
+                }
+                return liEle;
+            }
+            this.genListNotebook = () => {
+                var len = window.links.data.length;
+                var fragmentE = document.createDocumentFragment();
+                for (var i = 0; i < len; i++) {
+                    var info = window.links.data[i];
+                    fragmentE.appendChild(this.genNotebook(info))
+                }
+                this.notebook_ulE.appendChild(fragmentE);
+            }
+            this.genShortlink = () => {
+                if (this.genbtbE.dataset.state === "on") {
+                    return;
+                }
+                this.genmsgE.className = "";
+                this.genbtbE.dataset.state = "on";
+                var lineid = this.lineidE.value.trim();
+                if (lineid.length === 0) return;
+                if (!Auth()) {
+                    alert(window.loginState);
+                    return
+                }
+                var myHeaders = new Headers();
+                myHeaders.append("Authorization", window.jwtToken.Token);
+                myHeaders.append("Content-Type", "text/plain");
+
+                var raw = JSON.stringify({ LineID: lineid });
+
+                var requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
+                };
+                if (!window.fetch) {
+                    alert("當前瀏覽器不支持fetch,請更換瀏覽器後重試！");
+                    return;
+                }
+                fetch("/luck/admin/genlink", requestOptions)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (!result.code) {
+                            this.genmsgE.className = "error";
+                            this.genmsgE.innerHTML = "服務器錯誤！"
+                        } else if (result.code === 200) {
+                            var num = Number(this.totalE.innerText);
+                            if (num === 0) {
+                                this.notebook_ulE.className = "";
+                                this.notebook_ulE.innerHTML = "";
+                            }
+                            this.totalE.innerText = num + 1;
+                            this.genmsgE.className = "success";
+                            this.genmsgE.innerHTML = result.shortlink;
+                            var info = {
+                                LineId: lineid,
+                                ShortLink: result.shortlink,
+                                Prize: "",
+                                LuckDate: "",
+                            };
+                            this.notebook_ulE.insertAdjacentElement("afterbegin", this.genNotebook(info));
+                        } else if (result.code === 401) {
+                            this.genmsgE.className = "warning";
+                            this.genmsgE.innerHTML = result.message;
+                        } else {
+                            this.genmsgE.className = "error";
+                            this.genmsgE.innerHTML = result.message;
+                        }
+                    }).catch(error => {
+                        console.log('error', error);
+                        this.genmsgE.className = "error";
+                        this.genmsgE.innerHTML = "程序出錯,請聯繫管理員";
+                    }).finally(() => {
+                        this.genbtbE.dataset.state = "off";
+                    });
+            }
+
+            this.requestData = (callback) => {
+                var myHeaders = new Headers();
+                myHeaders.append("Authorization", window.jwtToken.Token);
+
+                var requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    redirect: 'follow'
+                };
+
+                fetch("http://127.0.0.1:81/luck/admin/shortlinks", requestOptions)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (!result.code) {
+                            this.notebook_ulE.className = "error";
+                            this.notebook_ulE.innerHTML = "服務器錯誤！";
+                        } else if (result.code === 200) {
+                            window.links = {
+                                total: result.total,
+                                data: result.data
+                            }
+                            if (result.data.length === 0) {
+                                this.notebook_ulE.className = "warning";
+                                this.notebook_ulE.innerHTML = "當前無記錄";
+                                return;
+                            }
+                            callback();
+                        } else if (result.code === 401) {
+                            this.notebook_ulE.className = "warning";
+                            this.notebook_ulE.innerHTML = result.message;
+                        } else {
+                            this.notebook_ulE.className = "error";
+                            this.notebook_ulE.innerHTML = result.message;
+                        }
+                    })
+                    .catch(error => {
+                        console.log('error', error);
+                        this.notebook_ulE.className = "error";
+                        this.notebook_ulE.innerHTML = "程序出錯,請聯繫管理員";
+                    });
+            }
+            this.initialize = () => {
+                this.requestData(() => {
+                    this.totalE.innerText = window.links.total;
+                    this.genListNotebook();
+                });
+            }
+            this.Run = () => {
+                this.initialize()
+                this.genbtbE.addEventListener("click", this.genShortlink);
+            }
+        }
+        (function () {
+            new App().Run();
+        })();
+    </script>
+</body>
+
+</html>

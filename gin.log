@@ -1,0 +1,22 @@
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /                         --> main.indexpage (5 handlers)
+[GIN-debug] GET    /luck                     --> main.nonepage (5 handlers)
+[GIN-debug] GET    /luck/static/*filepath    --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (5 handlers)
+[GIN-debug] HEAD   /luck/static/*filepath    --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (5 handlers)
+[GIN-debug] GET    /luck/login               --> github.com/gin-gonic/gin.(*RouterGroup).StaticFile.func1 (5 handlers)
+[GIN-debug] HEAD   /luck/login               --> github.com/gin-gonic/gin.(*RouterGroup).StaticFile.func1 (5 handlers)
+[GIN-debug] GET    /luck/admin               --> github.com/gin-gonic/gin.(*RouterGroup).StaticFile.func1 (5 handlers)
+[GIN-debug] HEAD   /luck/admin               --> github.com/gin-gonic/gin.(*RouterGroup).StaticFile.func1 (5 handlers)
+[GIN-debug] GET    /luck/prizes              --> main.(*App).getprizes-fm (5 handlers)
+[GIN-debug] POST   /luck/login/verify        --> main.(*App).loginVerify-fm (5 handlers)
+[GIN-debug] POST   /luck/admin/genlink       --> main.(*App).genlinkapi-fm (6 handlers)
+[GIN-debug] POST   /luck/admin/shortlinks    --> main.(*App).shortlinks-fm (6 handlers)
+[GIN-debug] GET    /luck/:shortlink          --> main.(*App).shortlinkpage-fm (5 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on 127.0.0.1:81
