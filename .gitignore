@@ -15,4 +15,7 @@
 # vendor/
 
 #air files
-tmp/
+/tmp
+
+#misc
+.DS_Store
