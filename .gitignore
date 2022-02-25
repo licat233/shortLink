@@ -17,5 +17,8 @@
 #air files
 /tmp
 
+#modules
+/luckview/node_modules
+
 #misc
 .DS_Store

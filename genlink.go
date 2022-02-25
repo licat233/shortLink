@@ -21,13 +21,17 @@ func (a *App) genlinkapi(ctx *gin.Context) {
 		})
 		return
 	}
-	shortUrl, err := a.RedisCli.Shorten(lineId)
+	info, err := a.RedisCli.Shorten(lineId)
 	if err != nil {
-		ctx.JSON(500, err)
+		ctx.JSON(200, gin.H{
+			"code":    err.Status(),
+			"message": err.Error(),
+		})
+		return
 	}
 	ctx.JSON(200, gin.H{
-		"code":      200,
-		"message":   "短链接生成端口",
-		"shortlink": shortUrl,
+		"code":    200,
+		"message": "短链接生成端口",
+		"data":    info,
 	})
 }

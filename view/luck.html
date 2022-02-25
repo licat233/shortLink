@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>幸運大抽獎</title>
+</head>
+
+<body>
+    <div id="my-lucky"></div>
+    <script src="https://cdn.jsdelivr.net/npm/lucky-canvas@1.7.20"></script>
+    <script>
+        // 大转盘简易 Demo
+        const myLucky = new LuckyCanvas.LuckyWheel('#my-lucky', {
+            width: '200px',
+            height: '200px',
+            blocks: [{ padding: '13px', background: '#617df2' }],
+            prizes: [
+                { fonts: [{ text: '0', top: '10%' }], background: '#e9e8fe' },
+                { fonts: [{ text: '1', top: '10%' }], background: '#b8c5f2' },
+                { fonts: [{ text: '2', top: '10%' }], background: '#e9e8fe' },
+                { fonts: [{ text: '3', top: '10%' }], background: '#b8c5f2' },
+                { fonts: [{ text: '4', top: '10%' }], background: '#e9e8fe' },
+                { fonts: [{ text: '5', top: '10%' }], background: '#b8c5f2' },
+            ],
+        })
+    </script>
+</body>
+
+</html>

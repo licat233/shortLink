@@ -13,6 +13,7 @@ import (
 const (
 	URLIDKEY     = "shortlinkkey"
 	ShortlinkKey = "shortlink:%s"
+	LineIDKey    = "lineId:%s"
 )
 
 type RedisCli struct {
@@ -22,11 +23,13 @@ type RedisCli struct {
 
 // ShortlinkInfo short_link info
 type ShortlinkInfo struct {
+	Status    bool   `json:"Status"`
+	Count     int    `json:"Count"`
 	LineId    string `json:"LineId"`
 	ShortLink string `json:"ShortLink"`
-	Prize     string `json:"Prize"`
+	Prize     *Prize `json:"Prize"`
 	LuckDate  string `json:"LuckDate"`
-	CreatedAt string `json:"created_at"`
+	CreatedAt string `json:"CreatedAt"`
 }
 
 var rdbConnCount int
@@ -57,56 +60,79 @@ func (r *RedisCli) InitializeRedis() (err error) {
 	return nil
 }
 
-// TODO 未做lineId唯一限制
-func (r *RedisCli) Shorten(lineId string) (string, error) {
-	// Incr global counter
-	if err := r.Cli.Incr(URLIDKEY).Err(); err != nil {
-		return "", err
+// Exists方法封装
+func (r *RedisCli) Exists(key string) (bool, error) {
+	v, err := r.Cli.Exists(key).Result()
+	if err != nil {
+		return false, err
 	}
 
-	// get global counter
+	return v > 0, nil
+}
+
+func (r *RedisCli) Shorten(lineId string) (*ShortlinkInfo, *StatusError) {
+	if len(lineId) < 4 {
+		return nil, LogicError(errors.New("lineID長度太小！！"))
+	}
+	if len(lineId) > 8 {
+		return nil, LogicError(errors.New("lineID長度太大！！"))
+	}
+	b, err := r.Exists(fmt.Sprintf(LineIDKey, lineId))
+	if err != nil {
+		return nil, ServerError(err)
+	}
+	if b {
+		return nil, LogicError(errors.New("lineID已經存在"))
+	}
+	if err := r.Cli.Incr(URLIDKEY).Err(); err != nil {
+		return nil, ServerError(err)
+	}
+
 	urlId, err := r.Cli.Get(URLIDKEY).Int()
 	if err != nil {
-		return "", err
+		return nil, ServerError(err)
 	}
 
-	// convert int to short link
-	eid := genstr(lineId, 8, urlId)
+	eid := r.genstr(lineId, 8, urlId)
 
-	// set detail for short link
 	shortLinkInfo := &ShortlinkInfo{
+		Status:    false,
+		Count:     0,
 		LineId:    lineId,
 		ShortLink: eid,
-		Prize:     "",
+		Prize:     nil,
 		LuckDate:  "",
 		CreatedAt: time.Now().String(),
 	}
 
-	// serialize short link info
 	jsonStr, err := json.Marshal(shortLinkInfo)
 	if err != nil {
-		return "", err
+		return nil, ServerError(err)
 	}
 
-	// set key for short link to detail
+	err = r.Cli.Set(fmt.Sprintf(LineIDKey, lineId), eid, 0).Err()
+	if err != nil {
+		return nil, ServerError(err)
+	}
+
 	err = r.Cli.Set(fmt.Sprintf(ShortlinkKey, eid), jsonStr, 0).Err()
 	if err != nil {
-		return "", err
+		return nil, ServerError(err)
 	}
 
-	return eid, err
+	return shortLinkInfo, nil
 }
 
-func (r *RedisCli) GetShortlinkInfo(eid string) (*ShortlinkInfo, error) {
+func (r *RedisCli) GetShortlinkInfo(eid string) (*ShortlinkInfo, *StatusError) {
 	jsonStr, err := r.Cli.Get(fmt.Sprintf(ShortlinkKey, eid)).Result()
 	if err == redis.Nil {
-		return nil, StatusError{Code: 404, Err: errors.New("unknown short url")}
+		return nil, &StatusError{Code: 404, Err: errors.New("unknown short url")}
 	} else if err != nil {
-		return nil, err
+		return nil, &StatusError{Code: 500, Err: fmt.Errorf("redis error: %s", err)}
 	}
 	res := &ShortlinkInfo{}
 	if e := json.Unmarshal([]byte(jsonStr), res); e != nil {
-		return nil, StatusError{Code: 500, Err: fmt.Errorf("json.Unmarshal failed:%s", e)}
+		return nil, &StatusError{Code: 500, Err: fmt.Errorf("json.Unmarshal failed:%s", e)}
 	}
 	return res, nil
 }
@@ -132,25 +158,30 @@ func (r *RedisCli) getUrls() ([]*ShortlinkInfo, error) {
 	return res, nil
 }
 
-func genstr(str string, length int, id int) string {
+func (r *RedisCli) genstr(str string, length int, id int) string {
+	m := len(str)
+	if m > 8 || m < 4 {
+		return ""
+	}
 	Base62 := "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	const key = "licat233"
+	const key = "xianggoumaoyi"
+	// 8 位密文 = 4位str code码 + 1位id码 + 3位随机码
 	n := len(key) - 1
 	bytes := []byte{}
-	for k, s := range []byte(str) {
-		keys := key[k%n]
-		ens := s + keys + byte(id)
-		ens = ens % 62
+	for k, s := range []byte(str)[:4] {
+		ens := (s + key[k%n] + str[id%m]) / 62
 		bytes = append(bytes, Base62[ens])
 	}
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	for i := len(bytes); i < length; i++ {
-		b := r.Intn(62)
-		bytes = append(bytes, Base62[b])
+	bytes = append(bytes, Base62[id%62])
+
+	rd := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := 0; i < 3; i++ {
+		bytes = append(bytes, Base62[rd.Intn(62)])
 	}
-	res := string(bytes)
-	if len(res) > 8 {
-		res = res[:8]
+	eid := string(bytes)
+	b, _ := r.Exists(fmt.Sprintf(ShortlinkKey, eid))
+	if b {
+		eid = r.genstr(str, length, id)
 	}
-	return res
+	return eid
 }

@@ -11,5 +11,9 @@ type Prize struct {
 }
 
 func (a *App) getprizes(ctx *gin.Context) {
-	ctx.JSON(200, a.Config.Prizes)
+	ctx.JSON(200, gin.H{
+		"code":    200,
+		"message": "請求成功",
+		"data":    a.Config.Prizes,
+	})
 }

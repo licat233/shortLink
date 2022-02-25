@@ -4,19 +4,55 @@
  - using env:	export GIN_MODE=release
  - using code:	gin.SetMode(gin.ReleaseMode)
 
-[GIN-debug] GET    /                         --> main.indexpage (5 handlers)
-[GIN-debug] GET    /luck                     --> main.nonepage (5 handlers)
-[GIN-debug] GET    /luck/static/*filepath    --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (5 handlers)
-[GIN-debug] HEAD   /luck/static/*filepath    --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (5 handlers)
-[GIN-debug] GET    /luck/login               --> github.com/gin-gonic/gin.(*RouterGroup).StaticFile.func1 (5 handlers)
-[GIN-debug] HEAD   /luck/login               --> github.com/gin-gonic/gin.(*RouterGroup).StaticFile.func1 (5 handlers)
-[GIN-debug] GET    /luck/admin               --> github.com/gin-gonic/gin.(*RouterGroup).StaticFile.func1 (5 handlers)
-[GIN-debug] HEAD   /luck/admin               --> github.com/gin-gonic/gin.(*RouterGroup).StaticFile.func1 (5 handlers)
-[GIN-debug] GET    /luck/prizes              --> main.(*App).getprizes-fm (5 handlers)
-[GIN-debug] POST   /luck/login/verify        --> main.(*App).loginVerify-fm (5 handlers)
-[GIN-debug] POST   /luck/admin/genlink       --> main.(*App).genlinkapi-fm (6 handlers)
-[GIN-debug] POST   /luck/admin/shortlinks    --> main.(*App).shortlinks-fm (6 handlers)
-[GIN-debug] GET    /luck/:shortlink          --> main.(*App).shortlinkpage-fm (5 handlers)
+[GIN-debug] GET    /                         --> main.indexpage (6 handlers)
+[GIN-debug] GET    /luck                     --> main.nonepage (6 handlers)
+[GIN-debug] GET    /luck/static/*filepath    --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (6 handlers)
+[GIN-debug] HEAD   /luck/static/*filepath    --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (6 handlers)
+[GIN-debug] GET    /luck/static1/*filepath   --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (6 handlers)
+[GIN-debug] HEAD   /luck/static1/*filepath   --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (6 handlers)
+[GIN-debug] GET    /luck/login               --> github.com/gin-gonic/gin.(*RouterGroup).StaticFile.func1 (6 handlers)
+[GIN-debug] HEAD   /luck/login               --> github.com/gin-gonic/gin.(*RouterGroup).StaticFile.func1 (6 handlers)
+[GIN-debug] GET    /luck/admin               --> github.com/gin-gonic/gin.(*RouterGroup).StaticFile.func1 (6 handlers)
+[GIN-debug] HEAD   /luck/admin               --> github.com/gin-gonic/gin.(*RouterGroup).StaticFile.func1 (6 handlers)
+[GIN-debug] GET    /luck/:shortlink          --> main.(*App).luckpage-fm (6 handlers)
+[GIN-debug] POST   /luck/prizes              --> main.(*App).getprizes-fm (6 handlers)
+[GIN-debug] POST   /luck/login/verify        --> main.(*App).loginVerify-fm (6 handlers)
+[GIN-debug] POST   /luck/admin/genlink       --> main.(*App).genlinkapi-fm (7 handlers)
+[GIN-debug] POST   /luck/admin/shortlinks    --> main.(*App).shortlinks-fm (7 handlers)
+[GIN-debug] POST   /luck/:shortlink/goodluck --> main.(*App).goodluck-fm (6 handlers)
+[GIN-debug] POST   /luck/:shortlink/info     --> main.(*App).shortlinkpage-fm (6 handlers)
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on 127.0.0.1:81
+[GIN] 2022/02/25 - 18:44:13 | 200 |    5.776917ms |       127.0.0.1 | GET      "/luck/admin"
+[GIN] 2022/02/25 - 18:44:13 | 200 |    5.979717ms |       127.0.0.1 | GET      "/luck/admin"
+[GIN] 2022/02/25 - 18:44:13 | 200 |    2.102564ms |       127.0.0.1 | GET      "/luck/static/js/admin.min.js"
+[GIN] 2022/02/25 - 18:44:13 | 200 |     2.25403ms |       127.0.0.1 | GET      "/luck/static/js/admin.min.js"
+[GIN] 2022/02/25 - 18:44:13 | 200 |    2.454581ms |       127.0.0.1 | GET      "/luck/static/css/admin.min.css"
+[GIN] 2022/02/25 - 18:44:13 | 200 |    2.492447ms |       127.0.0.1 | GET      "/luck/static/css/admin.min.css"
+[GIN] 2022/02/25 - 18:44:13 | 200 |   23.274126ms |       127.0.0.1 | POST     "/luck/admin/shortlinks"
+[GIN] 2022/02/25 - 18:44:13 | 200 |   23.344129ms |       127.0.0.1 | POST     "/luck/admin/shortlinks"
+[GIN] 2022/02/25 - 18:44:19 | 200 |     682.407µs |       127.0.0.1 | GET      "/luck/1111co5d"
+[GIN] 2022/02/25 - 18:44:19 | 200 |     731.394µs |       127.0.0.1 | GET      "/luck/1111co5d"
+[GIN] 2022/02/25 - 18:44:19 | 404 |         448ns |       127.0.0.1 | GET      "/static/js/main.14471fcb.js"
+[GIN] 2022/02/25 - 18:44:19 | 404 |      48.662µs |       127.0.0.1 | GET      "/static/js/main.14471fcb.js"
+[GIN] 2022/02/25 - 18:44:19 | 404 |         287ns |       127.0.0.1 | GET      "/static/css/main.e6c13ad2.css"
+[GIN] 2022/02/25 - 18:44:19 | 404 |       47.25µs |       127.0.0.1 | GET      "/static/css/main.e6c13ad2.css"
+[GIN] 2022/02/25 - 18:44:19 | 404 |        10.8µs |       127.0.0.1 | GET      "/manifest.json"
+[GIN] 2022/02/25 - 18:44:19 | 404 |      56.451µs |       127.0.0.1 | GET      "/manifest.json"
+[GIN] 2022/02/25 - 18:45:08 | 200 |     273.977µs |       127.0.0.1 | GET      "/luck/1111co5d"
+[GIN] 2022/02/25 - 18:45:08 | 200 |     692.431µs |       127.0.0.1 | GET      "/luck/1111co5d"
+[GIN] 2022/02/25 - 18:45:09 | 200 |  102.611202ms |       127.0.0.1 | GET      "/luck/static1/static/js/main.14471fcb.js"
+[GIN] 2022/02/25 - 18:45:09 | 200 |   102.65575ms |       127.0.0.1 | GET      "/luck/static1/static/js/main.14471fcb.js"
+[GIN] 2022/02/25 - 18:45:09 | 200 |   25.840393ms |       127.0.0.1 | GET      "/luck/static1/static/css/main.e6c13ad2.css"
+[GIN] 2022/02/25 - 18:45:09 | 200 |   25.909982ms |       127.0.0.1 | GET      "/luck/static1/static/css/main.e6c13ad2.css"
+[GIN] 2022/02/25 - 18:45:09 | 200 |    21.19932ms |       127.0.0.1 | GET      "/luck/static1/static/css/main.e6c13ad2.css.map"
+[GIN] 2022/02/25 - 18:45:09 | 200 |   21.238231ms |       127.0.0.1 | GET      "/luck/static1/static/css/main.e6c13ad2.css.map"
+[GIN] 2022/02/25 - 18:45:09 | 200 |      50.851µs |       127.0.0.1 | POST     "/luck/prizes"
+[GIN] 2022/02/25 - 18:45:09 | 200 |     101.404µs |       127.0.0.1 | POST     "/luck/prizes"
+[GIN] 2022/02/25 - 18:45:09 | 200 |  109.737143ms |       127.0.0.1 | GET      "/luck/static1/static/js/main.14471fcb.js.map"
+[GIN] 2022/02/25 - 18:45:09 | 200 |   109.78119ms |       127.0.0.1 | GET      "/luck/static1/static/js/main.14471fcb.js.map"
+[GIN] 2022/02/25 - 18:45:09 | 200 |     476.475µs |       127.0.0.1 | GET      "/luck/static1/manifest.json"
+[GIN] 2022/02/25 - 18:45:09 | 200 |     514.321µs |       127.0.0.1 | GET      "/luck/static1/manifest.json"
+[GIN] 2022/02/25 - 18:45:10 | 200 |    2.156933ms |       127.0.0.1 | GET      "/luck/static1/logo192.png"
+[GIN] 2022/02/25 - 18:45:10 | 200 |     2.23025ms |       127.0.0.1 | GET      "/luck/static1/logo192.png"
