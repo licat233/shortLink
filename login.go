@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	"github.com/licat233/goutil/readfile"
 )
 
 type Admin struct {
@@ -35,6 +36,12 @@ type LoginReq struct {
 func (a *App) loginVerify(ctx *gin.Context) {
 	req := &LoginReq{}
 	ctx.BindJSON(req)
+	//為了方便隨時更改賬號密碼，而不用重啟服務
+	readfile.YamlConfig("./config.yaml", &a.Config, func(err error) {
+		if err != nil {
+			panic(err)
+		}
+	})
 	if req.UserName != a.Config.Admin.Username || req.Password != a.Config.Admin.Password {
 		ctx.JSON(200, gin.H{
 			"code":    401,

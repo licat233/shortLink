@@ -5,38 +5,53 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
 function App() {
-  // const baseUrl = "http://127.0.0.1:81";
-  const baseUrl = "";
+  //development
+  // const reqUrls = {
+  //   luckUrl: "http://127.0.0.1:81/luck/Cr6fTmPS/goodluck",
+  //   prizesUrl: "http://127.0.0.1:81/luck/prizes"
+  // }
+  //production
+  const reqUrls = {
+    luckUrl: window.location.href + "/goodluck",
+    prizesUrl: "/luck/prizes"
+  }
+  const bkgImgRef = useRef();
   const LuckyRef = useRef();
-  const blocks = [{ padding: '10px', background: '#869cfa' }];
-  const wingif =
-    "https://img.alicdn.com/imgextra/i3/917298378/O1CN01xehpw42BlAxlaOqJ3_!!917298378.gif";
-  const bag =
-    "https://img.alicdn.com/imgextra/i3/917298378/O1CN01UerpAW2BlAxjrJB70_!!917298378.png";
-  const [prizes, setprizes] = useState([
-    { fonts: [{ text: '加載中', top: '70%', fontSize: "12px" }], background: '#e9e8fe', imgs: [{ src: bag, top: "10%", width: "50%", height: "50%" }] },
-    { fonts: [{ text: '加載中', top: '70%', fontSize: "12px" }], background: '#b8c5f2', imgs: [{ src: bag, top: "10%", width: "50%", height: "50%" }] },
-    { fonts: [{ text: '加載中', top: '70%', fontSize: "12px" }], background: '#e9e8fe', imgs: [{ src: bag, top: "10%", width: "50%", height: "50%" }] },
-    { fonts: [{ text: '加載中', top: '70%', fontSize: "12px" }], background: '#b8c5f2', imgs: [{ src: bag, top: "10%", width: "50%", height: "50%" }] },
-    { fonts: [{ text: '加載中', top: '70%', fontSize: "12px" }], background: '#e9e8fe', imgs: [{ src: bag, top: "10%", width: "50%", height: "50%" }] },
-    { fonts: [{ text: '加載中', top: '70%', fontSize: "12px" }], background: '#b8c5f2', imgs: [{ src: bag, top: "10%", width: "50%", height: "50%" }] },
-    { fonts: [{ text: '加載中', top: '70%', fontSize: "12px" }], background: '#e9e8fe', imgs: [{ src: bag, top: "10%", width: "50%", height: "50%" }] },
-    { fonts: [{ text: '加載中', top: '70%', fontSize: "12px" }], background: '#b8c5f2', imgs: [{ src: bag, top: "10%", width: "50%", height: "50%" }] },
-  ]);
-  const buttons = [
-    { radius: '50px', background: '#617df2' },
-    { radius: '45px', background: '#afc8ff' },
+  const btnImg = "https://img.alicdn.com/imgextra/i3/917298378/O1CN01EstEaX2BlAyhhL9eC_!!917298378.png";
+  const luckImg = "https://img.alicdn.com/imgextra/i3/917298378/O1CN01YCfmGB2BlAybPzuS2_!!917298378.png";
+  const bjimg = "https://img.alicdn.com/imgextra/i4/917298378/O1CN01Y5N7df2BlAyp3plHl_!!917298378.jpg";
+  const wingif = "https://img.alicdn.com/imgextra/i3/917298378/O1CN01xehpw42BlAxlaOqJ3_!!917298378.gif";
+  const blocks = [
     {
-      radius: '40px', background: '#ffb3eae0',
-      pointer: true,
-      fonts: [{ text: '開始\n抽獎', top: '-20px' }]
-    },
+      padding: '20px',
+      imgs: [{
+        src: luckImg,
+        width: '100%',
+        rotate: true
+      }]
+    }
+  ];
+  const defaultConfig = {
+    speed: 30,
+    accelerationTime: 2500,
+    decelerationTime: 5000,
+  };
+  const [prizes, setprizes] = useState([]);
+  const buttons = [
+    {
+      radius: '50%',
+      imgs: [{
+        src: btnImg,
+        width: '80%',
+        top: '-120%'
+      }]
+    }
   ];
   const mySwal = withReactContent(Swal);
   let prizesStatus = false;
   const luckData = useRef({});
   const swalpadding = "1.25rem";
-  const swalbkgcolor = "rgb(254 240 255 / 50%)";
+  const swalbkgcolor = "#ffffffde";
   const errorhandler = (error, icons) => {
     LuckyRef.current.stop();
     if (icons === "info") {
@@ -45,7 +60,7 @@ function App() {
         title: "Sorry",
         text: error,
         background: swalbkgcolor,
-        confirmButtonColor: "#ea5455",
+        confirmButtonColor: "#7066e0",
         imageUrl:
           "https://img.alicdn.com/imgextra/i3/917298378/O1CN01rYSA2P2BlAxmdQbE3_!!917298378.png",
         imageWidth: 150,
@@ -59,7 +74,7 @@ function App() {
       text: error,
       icon: icons,
       background: swalbkgcolor,
-      confirmButtonColor: "#ea5455",
+      confirmButtonColor: "#7066e0",
       footer: '<a href="line://">諮詢Anna老師</a>',
     });
   };
@@ -69,7 +84,7 @@ function App() {
       title: luckData.current.Name,
       text: "未中獎",
       background: swalbkgcolor,
-      confirmButtonColor: "#ea5455",
+      confirmButtonColor: "#7066e0",
       imageUrl:
         "https://img.alicdn.com/imgextra/i2/917298378/O1CN01oYLUlV2BlAxl0nzaw_!!917298378.png",
       imageWidth: 150,
@@ -104,7 +119,7 @@ function App() {
       html: `<span>中獎禮品為:  ${luckData.current.Name}<br/>
       中獎LineID為:  ${luckData.current.line}<br/>趕快聯繫Anna老師領取禮品吧</span>`,
       background: swalbkgcolor,
-      confirmButtonColor: "#ea5455",
+      confirmButtonColor: "#7066e0",
       imageUrl: luckData.current.Image,
       imageWidth: 150,
       footer: '<a href="line://">諮詢Anna老師</a>',
@@ -122,8 +137,7 @@ function App() {
     }
   }
   const setLuckyIndex = () => {
-    // const p = fetch(baseUrl + "/luck/1111d9Xd/goodluck", {
-    const p = fetch(window.location.href + "/goodluck", {
+    const p = fetch(reqUrls.luckUrl, {
       method: "POST",
       redirect: 'follow',
     });
@@ -157,8 +171,7 @@ function App() {
       return;
     }
     prizesStatus = true;
-    // await fetch(baseUrl + "/luck/prizes", {
-    await fetch(baseUrl + "/luck/prizes", {
+    await fetch(reqUrls.prizesUrl, {
       method: "POST",
       redirect: 'follow',
     })
@@ -177,14 +190,12 @@ function App() {
           });
           return;
         }
-        const newprizes = prizes;
-        result.data.forEach((item) => {
-          if (newprizes[item.Id]) {
-            newprizes[item.Id].fonts[0].text = item.Name;
-            newprizes[item.Id].imgs[0].src = item.Image;
-          }
+        const newPrizes = [];
+        result.data.forEach((item, key) => {
+          var prizeConfig = { background: key % 2 ? "#B68CF9" : "#FFFFFF", imgs: [{ src: item.Image, top: "10%", width: "40%" }] }
+          newPrizes.push(prizeConfig)
         });
-        setprizes(newprizes);
+        setprizes(newPrizes);
       })
       .catch((error) => {
         console.log(error)
@@ -200,7 +211,20 @@ function App() {
         });
       });
   };
-
+  const [luckBkgStyle, setluckBkgStyle] = useState({ top: "175px" });
+  // const [frameStyle, setframeStyle] = useState({ bottom: "-46px" });
+  const [luckyWidth, setluckyWidth] = useState("300px");
+  const [luckyHeight, setluckyHeight] = useState("300px");
+  const screenChangeHandler = () => {
+    //375px/175px = new / num = 2
+    //num = new / 2 
+    const ws = Number(bkgImgRef.current.offsetWidth);
+    setluckBkgStyle({ top: ws / 2 + "px" });
+    //375px/300px = new / num = 125 / 100
+    setluckyWidth(ws * 100 / 125 + "px");
+    setluckyHeight(ws * 100 / 125 + "px");
+    // setframeStyle({ bottom: -ws / 9 + "px" });
+  }
 
   const start = function () {
     // 开始游戏
@@ -215,24 +239,41 @@ function App() {
       } else {
         failPopup()
       }
-    }, 300)
+    }, 200)
   };
   useEffect(() => {
+    window.addEventListener("resize", screenChangeHandler);
+    screenChangeHandler();
     if (!prizesStatus) {
       getPrizesList();
     }
   }, [prizesStatus]);
-  return <LuckyWheel
-    ref={LuckyRef}
-    width="300px"
-    height="300px"
-    blocks={blocks}
-    prizes={prizes}
-    buttons={buttons}
-    onStart={start}
-    onEnd={end}
-  ></LuckyWheel>
-
+  return <section className="luckyContainer">
+    <div className="mainBkg">
+      <img src={bjimg} alt="" className="mainBkg" ref={bkgImgRef} />
+    </div>
+    <div className="luckBkg" style={luckBkgStyle}>
+      <div className="frameBox">
+        <img src="https://img.alicdn.com/imgextra/i2/917298378/O1CN01KC6HGn2BlAypmudZa_!!917298378.png" className="frameimg" alt="" />
+      </div>
+      <LuckyWheel
+        ref={LuckyRef}
+        width={luckyWidth}
+        height={luckyHeight}
+        blocks={blocks}
+        prizes={prizes}
+        buttons={buttons}
+        onStart={start}
+        onEnd={end}
+        defaultConfig={defaultConfig}
+      ></LuckyWheel>
+    </div>
+    <footer className="footer">
+      <div>
+        <img src="https://img.alicdn.com/imgextra/i2/917298378/O1CN01219yqf2BlAyoDRWhk_!!917298378.png" alt="" />
+      </div>
+    </footer>
+  </section>
 }
 
 export default App;
