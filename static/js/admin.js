@@ -7,6 +7,10 @@ function App() {
     this.notebook_ulE = document.getElementById("notebook_ul");
     this.queryE = document.getElementById("query");
     this.orderListE = document.getElementById("orderList");
+    this.to_scroll_top = (callback) => {
+        var scrollTopNum = .6 * (this.notebook_ulE.scrollTop || 0);
+        scrollTopNum > 10 ? (this.notebook_ulE.scrollTo(0, scrollTopNum), window.setTimeout(() => { this.to_scroll_top(callback) }, 20)) : (this.notebook_ulE.scrollTo(0, 0), callback())
+    }
     this.NewLinkInfo = function (line, link, createAt) {
         return {
             Status: false,
@@ -133,7 +137,7 @@ function App() {
                     window.links.total++;
                     nodeE.style.display = "none";
                     this.notebook_ulE.insertAdjacentElement("afterbegin", nodeE);
-                    this.showStyle(nodeE);
+                    this.to_scroll_top(() => { this.showStyle(nodeE) });
                 } else if (result.code === 401) {
                     this.alertMsg("warning", result.message);
                 } else {
@@ -211,10 +215,12 @@ function App() {
         var len = arr.length;
         if (len < 2) return
         var compareFn;
-        if (order === "asc") {
-            compareFn = (a, b) => a < b;
+        if (order === "asc" || order === "initial") {
+            compareFn = (a, b) => new Date(a.CreatedAt.substring(0, 19)) < new Date(b.CreatedAt.substring(0, 19));
         } else if (order === "desc") {
-            compareFn = (a, b) => a > b;
+            compareFn = (a, b) => new Date(a.CreatedAt.substring(0, 19)) > new Date(b.CreatedAt.substring(0, 19));
+        } else if (order === "win" || order === "fail" || order === "used") {
+            compareFn = (a, b) => new Date(a.LuckDate.substring(0, 19)) < new Date(b.LuckDate.substring(0, 19));
         } else {
             return;
         }
@@ -222,19 +228,31 @@ function App() {
         for (var i = len; i > 1; i--) {
             for (var j = 1; j < i; j++) {
                 before = arr[j - 1], after = arr[j];
-                if (compareFn(new Date(before.CreatedAt.substring(0, 19)), new Date(after.CreatedAt.substring(0, 19)))) {
+                if (compareFn(before, after)) {
                     temp = before, arr[j - 1] = after, arr[j] = temp;
                 }
             }
         }
     }
     this.orderListHandler = () => {
-        this.bubbleSort(window.links.data, this.orderListE.value);
+        var order = this.orderListE.value.trim();
+        var renderData = [];
+        if (order === "initial") {
+            renderData = window.links.data.filter(item => !item.Status);
+        } else if (order === "used") {
+            renderData = window.links.data.filter(item => item.Status);
+        } else if (order === "win") {
+            renderData = window.links.data.filter(item => item.Status && item.Prize.Win);
+        } else if (order === "fail") {
+            renderData = window.links.data.filter(item => item.Status && !item.Prize.Win);
+        } else if (order === "asc" || order === "desc") {
+            renderData = window.links.data;
+        }
+        this.bubbleSort(renderData, order);
         this.notebook_ulE.innerHTML = "";
-        this.genListNotebook(window.links.data);
+        this.genListNotebook(renderData);
     }
     this.animateButton = function () {
-        //reset animation
         this.genbtnE.classList.remove('animate');
         this.genbtnE.classList.add('animate');
         setTimeout(() => {
@@ -250,7 +268,7 @@ function App() {
             window.links.data = result.data;
             window.links.total = result.total;
             this.totalE.innerText = result.total;
-            this.bubbleSort(window.links.data,"asc");
+            this.bubbleSort(window.links.data, "asc");
             this.genListNotebook(window.links.data);
         });
     }

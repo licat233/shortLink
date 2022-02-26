@@ -123,7 +123,7 @@ function App() {
   }
   const setLuckyIndex = () => {
     // const p = fetch(baseUrl + "/luck/1111d9Xd/goodluck", {
-    const p = fetch("./goodluck", {
+    const p = fetch(window.location.href + "/goodluck", {
       method: "POST",
       redirect: 'follow',
     });

@@ -130,6 +130,7 @@ li {
     justify-content: space-between;
     /* text-align: right; */
     padding: 5px 5px 0 5px;
+    cursor: pointer;
 }
 
 .total {
@@ -423,6 +424,7 @@ li {
     display: inline-block;
     font-size: 14px;
     padding: 4px 8px;
+    margin: 0 0 0 10px;
     /* margin-top: 100px;
     margin-bottom: 60px; */
     -webkit-appearance: none;
@@ -640,5 +642,11 @@ li {
 @media screen and (max-width:370px) {
     .content {
         top: 10px;
+    }
+}
+
+@media screen and (max-width:320px) {
+    .content {
+        top: 0px;
     }
 }
